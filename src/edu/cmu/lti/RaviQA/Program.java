@@ -6,7 +6,7 @@ public class Program {
 	// Repeat
 	String input  = System.console().readLine();
 	ArrayList<ArrayList<String>> entities = Utils.GetEntities(input);
-	ArrayList<Artical> candidateArticalList = Utils.GetArtical(kwdArticalMap, entities);
+	ArrayList<Article> candidateArticalList = Utils.GetArtical(kwdArticalMap, entities);
 	ArrayList<Sentence> candidateSentenceList = Utils.GetCandSentence(candidateArticalList, entities);
 	ArrayList<Candidate> candidateAnswerList = Utils.GetCandAns(candidateSentenceList, entities);
 	// Print output

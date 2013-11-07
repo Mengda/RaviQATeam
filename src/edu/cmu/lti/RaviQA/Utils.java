@@ -13,7 +13,7 @@ public class Utils {
 		return null;
 	}
 
-	public static ArrayList<Artical> GetArtical(
+	public static ArrayList<Article> GetArtical(
 			HashMap<String, ArrayList<String>> kwdArticalMap,
 			ArrayList<ArrayList<String>> entities) {
 		// TODO Auto-generated method stub
@@ -21,7 +21,7 @@ public class Utils {
 	}
 
 	public static ArrayList<Sentence> GetCandSentence(
-			ArrayList<Artical> candidateArticalList,
+			ArrayList<Article> candidateArticalList,
 			ArrayList<ArrayList<String>> entities) {
 		// TODO Auto-generated method stub
 		return null;
