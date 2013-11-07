@@ -2,6 +2,10 @@
 
 import xml.etree.ElementTree as ET
 
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 def dfs(node,n):
     print ' ' * n, node.tag, '   ', node.attrib
     print ' ' * n, node.text
