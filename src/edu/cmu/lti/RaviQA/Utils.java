@@ -16,8 +16,7 @@ public class Utils {
 	public static ArrayList<Article> getArticle(
 			HashMap<String, ArrayList<String>> kwdArticalMap,
 			ArrayList<ArrayList<String>> entities) {
-		// TODO Auto-generated method stub
-		return null;
+		return ArticleProcessor.getArticle(kwdArticalMap, entities);
 	}
 
 	public static ArrayList<Sentence> getCandSentence(

@@ -2,6 +2,7 @@ package edu.cmu.lti.RaviQA;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -9,11 +10,35 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class ArticleProcessor {
 
+	public static ArrayList<Article> getArticle(
+			HashMap<String, ArrayList<String>> kwdArticalMap,
+			ArrayList<ArrayList<String>> entities) {
+		ArrayList<Article> answer = new ArrayList<Article>();
+		HashMap<String, Double> answerMap = new HashMap<String, Double>();
+		
+		for(String kwd : entities.get(0)){
+			if(kwdArticalMap.containsKey(kwd)){
+				for(String fileName : kwdArticalMap.get(kwd)){
+					if(!answerMap.containsKey(fileName)){
+						answerMap.put(fileName, 0.);
+					}
+					answerMap.put(fileName, answerMap.get(fileName)+1);
+				}
+			}
+		}
+		
+		for(String fileName : answerMap.keySet()){
+			answer.add(new Article(fileName, answerMap.get(fileName)));
+		}
+		
+		return answer;
+	}
+
+	
 	public static ArrayList<Sentence> getCandSentence(
 			ArrayList<Article> candidateArticalList,
 			ArrayList<ArrayList<String>> entities) throws Exception {
@@ -21,6 +46,7 @@ public class ArticleProcessor {
 		ArrayList<Sentence> answer = new ArrayList<Sentence>();
 
 		for (Article article : candidateArticalList) {
+			Double score = article.score;
 			String fileName = "articles." + article.fileName;
 
 			File fXmlFile = new File(fileName);
@@ -30,7 +56,7 @@ public class ArticleProcessor {
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 
-			processNode(doc.getChildNodes(), entities, answer);
+			processNode(doc.getChildNodes(), entities, answer, score);
 
 		}
 
@@ -38,7 +64,7 @@ public class ArticleProcessor {
 	}
 
 	private static void processNode(NodeList nodeList,
-			ArrayList<ArrayList<String>> entities, ArrayList<Sentence> answer) {
+			ArrayList<ArrayList<String>> entities, ArrayList<Sentence> answer, Double score) {
 
 		for (int count = 0; count < nodeList.getLength(); count++) {
 
@@ -57,14 +83,14 @@ public class ArticleProcessor {
 						match = match + StringUtils.countMatches(sentence, s) * 10;
 					}
 					if(match!=0){
-						answer.add(new Sentence(sentence,new Double(match)));
+						answer.add(new Sentence(sentence,match * score));
 					}
 				}
 				
 				if (tempNode.hasChildNodes()) {
 
 					// loop again if has child nodes
-					processNode(tempNode.getChildNodes(), entities, answer);
+					processNode(tempNode.getChildNodes(), entities, answer, score);
 
 				}
 
