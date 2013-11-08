@@ -10,11 +10,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ArticleProcessor {
 
-	public static ArrayList<Sentence> GetCandSentence(
+	public static ArrayList<Sentence> getCandSentence(
 			ArrayList<Article> candidateArticalList,
 			ArrayList<ArrayList<String>> entities) throws Exception {
 
@@ -30,14 +30,14 @@ public class ArticleProcessor {
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 
-			printNote(doc.getChildNodes(), entities, answer);
+			processNode(doc.getChildNodes(), entities, answer);
 
 		}
 
 		return answer;
 	}
 
-	private static void printNote(NodeList nodeList,
+	private static void processNode(NodeList nodeList,
 			ArrayList<ArrayList<String>> entities, ArrayList<Sentence> answer) {
 
 		for (int count = 0; count < nodeList.getLength(); count++) {
@@ -64,7 +64,7 @@ public class ArticleProcessor {
 				if (tempNode.hasChildNodes()) {
 
 					// loop again if has child nodes
-					printNote(tempNode.getChildNodes(), entities, answer);
+					processNode(tempNode.getChildNodes(), entities, answer);
 
 				}
 

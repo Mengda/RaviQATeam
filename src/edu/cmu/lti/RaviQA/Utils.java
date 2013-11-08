@@ -3,7 +3,7 @@ package edu.cmu.lti.RaviQA;
 import java.util.*;
 
 public class Utils {
-	static public ArrayList<ArrayList<String>> GetEntities(String input) {
+	static public ArrayList<ArrayList<String>> getEntities(String input) {
 
 		return null;
 	}
@@ -13,18 +13,18 @@ public class Utils {
 		return null;
 	}
 
-	public static ArrayList<Article> GetArtical(
+	public static ArrayList<Article> getArticle(
 			HashMap<String, ArrayList<String>> kwdArticalMap,
 			ArrayList<ArrayList<String>> entities) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static ArrayList<Sentence> GetCandSentence(
+	public static ArrayList<Sentence> getCandSentence(
 			ArrayList<Article> candidateArticalList,
 			ArrayList<ArrayList<String>> entities) {
 		try {
-			return ArticleProcessor.GetCandSentence(candidateArticalList, entities);
+			return ArticleProcessor.getCandSentence(candidateArticalList, entities);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -32,7 +32,7 @@ public class Utils {
 		return null;
 	}
 
-	public static ArrayList<Candidate> GetCandAns(
+	public static ArrayList<Candidate> getCandAns(
 			ArrayList<Sentence> candidateSentenceList,
 			ArrayList<ArrayList<String>> entities) {
 		// TODO Auto-generated method stub

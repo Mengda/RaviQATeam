@@ -8,12 +8,12 @@ public class Program {
 
 		// Repeat
 		String input = System.console().readLine();
-		ArrayList<ArrayList<String>> entities = Utils.GetEntities(input);
-		ArrayList<Article> candidateArticalList = Utils.GetArtical(
+		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
+		ArrayList<Article> candidateArticalList = Utils.getArticle(
 				kwdArticalMap, entities);
-		ArrayList<Sentence> candidateSentenceList = Utils.GetCandSentence(
+		ArrayList<Sentence> candidateSentenceList = Utils.getCandSentence(
 				candidateArticalList, entities);
-		ArrayList<Candidate> candidateAnswerList = Utils.GetCandAns(
+		ArrayList<Candidate> candidateAnswerList = Utils.getCandAns(
 				candidateSentenceList, entities);
 		// Print output
 
