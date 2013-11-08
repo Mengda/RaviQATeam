@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # File Reader in Python
 #
 # Written by: Qichen Pan
@@ -13,24 +14,25 @@ dirs = [d for d in os.listdir(dataPath)]
 FILES = []
 KWDs = []
 for d in dirs:
-	files = [f for f in os.listdir(dataPath + d)] #if os.path.isfile(f)]
-	for f in files:
-		tmpFile = file(dataPath + d + '/' + f)
-		FILES.append(f)
-		kwdTuple = ()
-		while True:
-			line = tmpFile.readline()
-			if len(line) == 0:
-				break
+	if os.path.isdir(dataPath + d) == True:
+		files = [f for f in os.listdir(dataPath + d)] #if os.path.isfile(f)]
+		for f in files:
+			tmpFile = file(dataPath + d + '/' + f)
+			FILES.append(f)
+			kwdTuple = ()
 			while True:
-				lpos = line.find('<kwd>') + 5
-				rpos = line.find('</kwd>')
-				if rpos != -1:
-					kwdTuple = kwdTuple + (line[lpos : rpos], )
-				else: 
+				line = tmpFile.readline()
+				if len(line) == 0:
 					break
-				line = line[rpos + 1 :]
-		KWDs.append(kwdTuple)	
+				while True:
+					lpos = line.find('<kwd>') + 5
+					rpos = line.find('</kwd>')
+					if rpos != -1:
+						kwdTuple = kwdTuple + (line[lpos : rpos], )
+					else: 
+						break
+					line = line[rpos + 1 :]
+			KWDs.append(kwdTuple)	
 	#break
 outputFile = file('Output', 'w+')
 for i in range(0, len(FILES)):
