@@ -22,6 +22,7 @@ public class IndexLoader {
 				Collections.addAll(value, fileNames);
 				answer.put(key, value);
 			}
+			br.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
