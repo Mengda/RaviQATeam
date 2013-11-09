@@ -2,6 +2,11 @@ package edu.cmu.lti.RaviQA;
 
 import java.util.*;
 
+/**
+ * 
+ * @author mengdayang
+ * 
+ */
 public class Utils {
 	static public ArrayList<ArrayList<String>> getEntities(String input) {
 
@@ -25,7 +30,6 @@ public class Utils {
 			return ArticleProcessor.getCandSentence(candidateArticalList,
 					entities);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -34,7 +38,6 @@ public class Utils {
 	public static ArrayList<Candidate> getCandAns(
 			ArrayList<Sentence> candidateSentenceList,
 			ArrayList<ArrayList<String>> entities) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -43,7 +46,6 @@ public class Utils {
 
 		answer.add(word);
 		// TODO add synonym dictionary.
-
 		return answer;
 
 	}

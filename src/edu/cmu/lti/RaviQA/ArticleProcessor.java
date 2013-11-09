@@ -12,6 +12,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 
+ * @author mengdayang
+ *
+ */
 public class ArticleProcessor {
 
 	public static ArrayList<Article> getArticle(

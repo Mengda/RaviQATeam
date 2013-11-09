@@ -1,7 +1,11 @@
 package edu.cmu.lti.RaviQA;
 
 import java.util.*;
-
+/**
+ * 
+ * @author mengdayang
+ *
+ */
 public class Program {
 	public static void main(String[] args) {
 		HashMap<String, ArrayList<String>> kwdArticalMap = Utils.LoadIndex();

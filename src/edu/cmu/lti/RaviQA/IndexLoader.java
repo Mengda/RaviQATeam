@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * 
+ * @author mengdayang
+ *
+ */
 public class IndexLoader {
 
 	public static HashMap<String, ArrayList<String>> Load() {
