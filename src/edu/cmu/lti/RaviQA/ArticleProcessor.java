@@ -47,7 +47,7 @@ public class ArticleProcessor {
 
 		for (Article article : candidateArticalList) {
 			Double score = article.score;
-			String fileName = "articles." + article.fileName;
+			String fileName = article.fileName;
 
 			File fXmlFile = new File(fileName);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory

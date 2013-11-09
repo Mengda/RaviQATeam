@@ -12,28 +12,25 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 
 public class AnswerProcessor {
-  private ArrayList<Candidate> candidates;
-  private ArrayList<String> answers;
-  private static String ExampleSentience = "How can I view the change history of an individual file in Git, complete with what has changed?";
-  
-  
-  public static void main(String arg[])
-  {
-  String grammar = "englishPCFG.ser.gz";
-  String[] options = { "-maxLength", "80", "-retainTmpSubcategories" };
-  LexicalizedParser lp =  LexicalizedParser.loadModel(grammar);
-  lp.setOptionFlags(options);
-  Tree parse = lp.parse(ExampleSentience);
-  parse.pennPrint();
+	private ArrayList<Candidate> candidates;
+	private ArrayList<String> answers;
+	private static String ExampleSentience = "How can I view the change history of an individual file in Git, complete with what has changed?";
 
-  TreebankLanguagePack tlp = new PennTreebankLanguagePack();
-  GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-  GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
+	public static void main(String arg[]) {
+		String grammar = "englishPCFG.ser.gz";
+		String[] options = { "-maxLength", "80", "-retainTmpSubcategories" };
+		LexicalizedParser lp = LexicalizedParser.loadModel(grammar);
+		lp.setOptionFlags(options);
+		Tree parse = lp.parse(ExampleSentience);
+		parse.pennPrint();
 
-  Collection tdl = gs.typedDependenciesCCprocessed();
-  System.out.println(gs.typedDependenciesCCprocessed(true));
-  System.out.println();
-  }
-  
+		TreebankLanguagePack tlp = new PennTreebankLanguagePack();
+		GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+		GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
+
+		Collection tdl = gs.typedDependenciesCCprocessed();
+		System.out.println(gs.typedDependenciesCCprocessed(true));
+		System.out.println();
+	}
 
 }
