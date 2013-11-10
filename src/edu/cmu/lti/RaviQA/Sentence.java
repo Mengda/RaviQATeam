@@ -1,5 +1,10 @@
 package edu.cmu.lti.RaviQA;
 
+/**
+ * 
+ * @author mengdayang
+ * 
+ */
 public class Sentence {
 	public String text;
 	public Double score;

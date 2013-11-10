@@ -12,6 +12,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 
+ * @author mengdayang
+ *
+ */
 public class ArticleProcessor {
 
 	public static ArrayList<Article> getArticle(
@@ -47,7 +52,7 @@ public class ArticleProcessor {
 
 		for (Article article : candidateArticalList) {
 			Double score = article.score;
-			String fileName = "articles." + article.fileName;
+			String fileName = article.fileName;
 
 			File fXmlFile = new File(fileName);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
