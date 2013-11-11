@@ -38,4 +38,8 @@ Thumbs.db
 
 # articles #
 ############
-./article*/
+articles.A-B/
+articles.C-H/
+articles.I-N/
+articles.O-Z/
+

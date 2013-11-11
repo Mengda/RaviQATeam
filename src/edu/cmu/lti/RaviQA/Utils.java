@@ -8,9 +8,13 @@ import java.util.*;
  * 
  */
 public class Utils {
+	// returnvalue.get(0) = noun phrase
+	// returnvalue.get(1) = verb
 	static public ArrayList<ArrayList<String>> getEntities(String input) {
-
-		return null;
+		// Using a silly getEntities!
+		System.out.println("Using a silly getEntities!");
+		return Tester.getEntities(input);
+		//return null;
 	}
 
 	static public HashMap<String, ArrayList<String>> LoadIndex() {

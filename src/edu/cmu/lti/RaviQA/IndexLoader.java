@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * 
  * @author mengdayang
- *
+ * 
  */
 public class IndexLoader {
 
@@ -21,15 +21,25 @@ public class IndexLoader {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
 			while (line != null) {
-				String key = line.split("\t")[0];
-				String[] fileNames = line.split("\t")[1].split("#");
-				ArrayList<String> value = new ArrayList<String>();
+				String[] components = line.split("\t");
+				if (components.length!=2) {
+					System.err.println("KeyDict Format Error! line = \"" + line + "\"");
+					line = br.readLine();
+					continue;
+				}
+				
+				String key = components[0].toLowerCase();
+				if(!answer.containsKey(key)){
+					answer.put(key, new ArrayList<String>());
+				}
+				
+				String[] fileNames = components[1].split("#");
+				ArrayList<String> value = answer.get(key);
 				Collections.addAll(value, fileNames);
-				answer.put(key, value);
+				line = br.readLine();
 			}
 			br.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return answer;
