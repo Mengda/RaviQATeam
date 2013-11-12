@@ -1,5 +1,6 @@
 package edu.cmu.lti.RaviQA;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,15 @@ import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
+import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.washington.cs.knowitall.extractor.ReVerbExtractor;
+import edu.washington.cs.knowitall.extractor.conf.ConfidenceFunction;
+import edu.washington.cs.knowitall.extractor.conf.ReVerbOpenNlpConfFunction;
+import edu.washington.cs.knowitall.nlp.ChunkedSentence;
+import edu.washington.cs.knowitall.nlp.OpenNlpSentenceChunker;
+import edu.washington.cs.knowitall.nlp.extraction.ChunkedBinaryExtraction;
+import abner.Tagger;
 
 public class AnswerProcessor {
   private ArrayList<Candidate> candidates;
@@ -30,7 +39,9 @@ public class AnswerProcessor {
   private ArrayList<String> answers;
 
   private static String ExampleSentience = "John hit the ball";
-  //private static String eg = "CLU1 and CLU2 are predicted to produce intracellular and secreted proteins";
+
+  // private static String eg =
+  // "CLU1 and CLU2 are predicted to produce intracellular and secreted proteins";
   // part-of-speech tagger.
   private static String eg = "I am one of the people who don't like Apple product";
 
@@ -71,13 +82,13 @@ public class AnswerProcessor {
   }
 
   // parser, will be usint in next iteration. hopefully
-  private static void sentieceParser() {
+  private static void sentieceParser(String str) {
     String grammar = "englishPCFG.ser.gz";
     String[] options = { "-maxLength", "80", "-retainTmpSubcategories" };
     LexicalizedParser lp = LexicalizedParser.loadModel(grammar);
     lp.setOptionFlags(options);
 
-    Tree parse = lp.parse(eg);
+    Tree parse = lp.parse(str);
     extractAllNameEntity(parse);
 
     parse.pennPrint();
@@ -86,8 +97,12 @@ public class AnswerProcessor {
     GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
     GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
 
-    Collection tdl = gs.typedDependenciesCCprocessed();
-    System.out.println(gs.typedDependenciesCCprocessed(true));
+    Collection<TypedDependency> tdl = gs.typedDependenciesCCprocessed(true);
+    System.out.println(tdl);
+    TypedDependency a;
+    a = tdl.iterator().next();
+    System.out.println("a = :");
+    //System.out.println(gs.typedDependenciesCCprocessed(true));
     System.out.println();
   }
 
@@ -99,13 +114,13 @@ public class AnswerProcessor {
     String currentAnswer = null;
     for (int i = 0; i < candidates.size(); i++) {
       Tokenizer<Word> tokenizer = factory.getTokenizer(new StringReader(candidates.get(i).text));
-      
+
       while (tokenizer.hasNext()) {
         Word temp = tokenizer.next();
         if (dictionary.contains(temp.toString())) {
           if (result.containsKey(temp.toString())) {
             result.put(temp.toString(), result.get(temp.toString()) + 1);
-            if(result.get(temp.toString()) > currentMax)
+            if (result.get(temp.toString()) > currentMax)
               currentAnswer = temp.toString();
           } else {
             result.put(temp.toString(), 1);
@@ -118,16 +133,87 @@ public class AnswerProcessor {
 
   }
 
-  private static String predictAnswer(ArrayList<Candidate> candidates)
+  private static String findEntityWithMaxFrequency(ArrayList<Candidate> candidates,
+          String QuestionEntity) {
+
+    HashMap<String, Integer> result = new HashMap<String, Integer>();
+
+    Tagger abnerTagger = null;
+    abnerTagger = new Tagger(Tagger.BIOCREATIVE);
+    int currentMax = 0;
+    String currentAnswer = "";
+    for (int k = 0; k < candidates.size(); k++) {
+      String[][] nerTagged = abnerTagger.getEntities(candidates.get(k).text);
+      // for (int i = 0; i < nerTagged.length; i++) {
+      int i = 0;
+      for (int j = 0; j < nerTagged[i].length; j++) {
+        // System.out.println(nerTagged[i][j]);
+        if (nerTagged[i][j].equals(QuestionEntity))
+          continue;
+        if (!result.containsKey(nerTagged[i][j]))
+          result.put(nerTagged[i][j], 0);
+
+        result.put(nerTagged[i][j], result.get(nerTagged[i][j]) + 1);
+        if (result.get(nerTagged[i][j]) >= currentMax) {
+          currentMax = result.get(nerTagged[i][j]);
+          currentAnswer = nerTagged[i][j];
+
+        }
+
+      }
+
+      // }
+
+    }
+
+    // String nerTagged = abnerTagger.tagABNER("gene");
+
+    return currentAnswer;
+
+  }
+
+  private static String predictAnswer(ArrayList<Candidate> candidates) {
+    return findWordWithMaxFrequency(candidates);
+  }
+
+  private static void ReVerbExtract(String str) throws IOException
   {
-    return findWordWithMaxFrequency( candidates);
-  }
-  public static void main(String arg[]) {
+    // Looks on the classpath for the default model files.
+    OpenNlpSentenceChunker chunker = new OpenNlpSentenceChunker();
+    ChunkedSentence sent = chunker.chunkSentence(str);
 
-    sentieceParser();
-    //System.out.println("is this working?");
-    //tagger("just test");
-  }
+    // Prints out the (token, tag, chunk-tag) for the sentence
+    System.out.println(str);
+    for (int i = 0; i < sent.getLength(); i++) {
+        String token = sent.getToken(i);
+        String posTag = sent.getPosTag(i);
+        String chunkTag = sent.getChunkTag(i);
+        System.out.println(token + " " + posTag + " " + chunkTag);
+    }
 
+    // Prints out extractions from the sentence.
+    ReVerbExtractor reverb = new ReVerbExtractor();
+    ConfidenceFunction confFunc = new ReVerbOpenNlpConfFunction();
+    for (ChunkedBinaryExtraction extr : reverb.extract(sent)) {
+        double conf = confFunc.getConf(extr);
+        System.out.println("Arg1=" + extr.getArgument1());
+        System.out.println("Rel=" + extr.getRelation());
+        System.out.println("Arg2=" + extr.getArgument2());
+        System.out.println("Conf=" + conf);
+    }
+  }
+  public static void main(String arg[]) throws IOException {
+    ArrayList<Candidate> candidates = new ArrayList<Candidate>();
+    Candidate cand = new Candidate();
+    cand.text = " Flt-3 ligand kills G-CSF";
+
+    candidates.add(cand);
+    // findEntityWithMaxFrequency(candidates, "human CD34+");
+    System.out.println(findEntityWithMaxFrequency(candidates, "G-CSF"));
+    sentieceParser("Bill kills Ravi with knife.");
+    ReVerbExtract("Bill kills Ravi with knife.");
+    // tagger("just test");
+
+  }
 
 }
