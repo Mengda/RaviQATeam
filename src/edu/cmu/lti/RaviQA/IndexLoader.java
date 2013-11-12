@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import com.google.common.base.CharMatcher;
+
 /**
  * 
  * @author mengdayang
@@ -24,6 +26,12 @@ public class IndexLoader {
 				String[] components = line.split("\t");
 				if (components.length!=2) {
 					System.err.println("KeyDict Format Error! line = \"" + line + "\"");
+					line = br.readLine();
+					continue;
+				}
+				
+				if(!CharMatcher.ASCII.matchesAllOf(line)){
+					System.err.println("Line contains non-ASCII characters! line = \"" + line + "\"");
 					line = br.readLine();
 					continue;
 				}
