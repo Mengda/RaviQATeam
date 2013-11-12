@@ -1,6 +1,7 @@
 package edu.cmu.lti.RaviQA;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +64,8 @@ public class ArticleProcessor {
 		HashMap<String, Double> answerMap = new HashMap<String, Double>();
 
 		for (String kwd : entities.get(0)) {
+			
+			//TODO Need to find a way to better match.
 			if (kwdArticalMap.containsKey(kwd)) {
 				for (String fileName : kwdArticalMap.get(kwd)) {
 					if (!answerMap.containsKey(fileName)) {
@@ -95,11 +98,14 @@ public class ArticleProcessor {
 					+ "\"");
 
 			File fXmlFile = new File(fileName);
+			try {
+				Document doc = getDocumentBuilder().parse(fXmlFile);
+				doc.getDocumentElement().normalize();
 
-			Document doc = getDocumentBuilder().parse(fXmlFile);
-			doc.getDocumentElement().normalize();
-
-			processNode(doc.getChildNodes(), entities, result, score);
+				processNode(doc.getChildNodes(), entities, result, score);
+			} catch (FileNotFoundException e) {
+				System.err.format("File not found, file = \"%s\"\n",fileName);
+			}
 		}
 		for (String key : result.keySet()) {
 			answer.add(new Sentence(key, result.get(key)));
@@ -141,7 +147,7 @@ public class ArticleProcessor {
 
 					if (match != 0) {
 
-						result.put(sentence, score);
+						result.put(sentence, score * match);
 					}
 				}
 

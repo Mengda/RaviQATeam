@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Tester {
 	public static void main(String[] args) {
 		HashMap<String, ArrayList<String>> kwdArticleMap = Utils.LoadIndex();
@@ -11,41 +13,46 @@ public class Tester {
 		 * for (String s : kwdArticleMap.keySet()) { System.out.println(s); }
 		 */
 
-		String input = "what does familial harm";
+		String input = "What move neuron?";
+
 		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
 		for (String s : entities.get(0)) {
 			System.out.println(s);
 		}
-		
+
 		System.out.println();
-		
+
 		for (String s : entities.get(1)) {
 			System.out.println(s);
 		}
-		
+
 		System.out.println("===========");
-		
+
 		ArrayList<Article> candidateArticleList = Utils.getArticle(
 				kwdArticleMap, entities);
-		
-		for(Article a : candidateArticleList){
+
+		for (Article a : candidateArticleList) {
 			System.out.println(a.fileName + " : " + a.score);
 		}
-		
+
 		System.out.println("===========");
-		
+
 		ArrayList<Sentence> candidateSentenceList = Utils.getCandSentence(
 				candidateArticleList, entities);
-		
-		for(Sentence s : candidateSentenceList){
-			System.out.format("%f : %s\n",s.score,s.text);
+
+		for (Sentence s : candidateSentenceList) {
+			System.out.format("%f : %s\n", s.score, s.text);
 		}
-		
+		String sss = "Based on these data, only 3% (1/31) of SN neurons from the elderly subjects harbour a clonally expanded point mutation, a very different scenario to mtDNA deletions, where high levels of deletions were detected in COX normal neurons from the same subjects (Table 1) and other elderly subjects (Bender et al";
+		System.out.println(StringUtils.countMatches(sss, "neurons"));
+		System.out.println(StringUtils.countMatches(sss, "neuron"));
+
 	}
 
 	public static ArrayList<ArrayList<String>> getEntities(String input) {
 
-		String[] words = input.toLowerCase().split(" ");
+		String[] words = input.replaceAll("[^a-zA-Z ]", "").toLowerCase()
+				.split("\\s+");
 		ArrayList<ArrayList<String>> answer = new ArrayList<ArrayList<String>>();
 		ArrayList<String> noun = new ArrayList<String>();
 		ArrayList<String> verb = new ArrayList<String>();
