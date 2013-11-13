@@ -49,10 +49,10 @@
   		<artifactId>reverb-models</artifactId>
   		<version>1.4.0</version>
   		</dependency>
-  		<dependency>
+  	<dependency>
   		<groupId>com.google.guava</groupId>
-  		<artifactId>guava</artifactId>
-  		<version>15.0</version>
+  		<artifactId>guava-base</artifactId>
+  		<version>r03</version>
   	</dependency>
 	</dependencies>
 </project>

@@ -16,6 +16,7 @@ public class Tester {
 		String input = "What move neuron?";
 
 		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
+		//System.out.println(x);
 		for (String s : entities.get(0)) {
 			System.out.println(s);
 		}
