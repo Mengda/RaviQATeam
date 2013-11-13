@@ -43,3 +43,6 @@ articles.C-H/
 articles.I-N/
 articles.O-Z/
 
+# target folder #
+#################
+target/
