@@ -13,11 +13,11 @@ public class Tester {
 		 * for (String s : kwdArticleMap.keySet()) { System.out.println(s); }
 		 */
 
-		//String input = "What move neuron?";
+		// String input = "What move neuron?";
 		String input = "What inhibit apoptotic cell death";
 
 		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
-		//System.out.println(x);
+		// System.out.println(x);
 		for (String s : entities.get(0)) {
 			System.out.println(s);
 		}
@@ -45,21 +45,16 @@ public class Tester {
 		for (Sentence s : candidateSentenceList) {
 			System.out.format("%f : %s\n", s.score, s.text);
 		}
-		String sss = "Based on these data, only 3% (1/31) of SN neurons from the elderly subjects harbour a clonally expanded point mutation, a very different scenario to mtDNA deletions, where high levels of deletions were detected in COX normal neurons from the same subjects (Table 1) and other elderly subjects (Bender et al";
-		System.out.println(StringUtils.countMatches(sss, "neurons"));
-		System.out.println(StringUtils.countMatches(sss, "neuron"));
 
-		
+		// findEntityWithMaxFrequency(candidateSentenceList, "human CD34+");
+		AnswerProcessor answerProcessor = new AnswerProcessor();
+		System.out.println("result is "
+				+ AnswerProcessor.findEntityWithMaxFrequency(
+						candidateSentenceList, "G-CSF"));
 
-   //findEntityWithMaxFrequency(candidateSentenceList, "human CD34+");
-    AnswerProcessor answerProcessor = new AnswerProcessor();
-    System.out.println("result is " + answerProcessor.findEntityWithMaxFrequency(candidateSentenceList, "G-CSF"));
-		
 	}
 
-
-
-  public static ArrayList<ArrayList<String>> getEntities(String input) {
+	public static ArrayList<ArrayList<String>> getEntities(String input) {
 
 		String[] words = input.replaceAll("[^a-zA-Z ]", "").toLowerCase()
 				.split("\\s+");
