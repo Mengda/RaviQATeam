@@ -13,7 +13,8 @@ public class Tester {
 		 * for (String s : kwdArticleMap.keySet()) { System.out.println(s); }
 		 */
 
-		String input = "What move neuron?";
+		//String input = "What move neuron?";
+		String input = "What inhibit apoptotic cell death";
 
 		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
 		//System.out.println(x);
@@ -48,9 +49,17 @@ public class Tester {
 		System.out.println(StringUtils.countMatches(sss, "neurons"));
 		System.out.println(StringUtils.countMatches(sss, "neuron"));
 
+		
+
+   //findEntityWithMaxFrequency(candidateSentenceList, "human CD34+");
+    AnswerProcessor answerProcessor = new AnswerProcessor();
+    System.out.println("result is " + answerProcessor.findEntityWithMaxFrequency(candidateSentenceList, "G-CSF"));
+		
 	}
 
-	public static ArrayList<ArrayList<String>> getEntities(String input) {
+
+
+  public static ArrayList<ArrayList<String>> getEntities(String input) {
 
 		String[] words = input.replaceAll("[^a-zA-Z ]", "").toLowerCase()
 				.split("\\s+");
@@ -62,7 +71,7 @@ public class Tester {
 
 		Collections.addAll(verb, words);
 		Collections.addAll(noun, words);
-		for (int i = 0; i < words.length - 1; ++i) {
+		for (int i = 1; i < words.length - 1; ++i) {
 			StringBuilder sb = new StringBuilder().append(words[i]);
 			for (int j = i + 1; j < words.length; ++j) {
 				sb.append(" ");

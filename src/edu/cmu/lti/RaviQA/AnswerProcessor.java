@@ -106,7 +106,7 @@ public class AnswerProcessor {
     System.out.println();
   }
 
-  private static String findWordWithMaxFrequency(ArrayList<Candidate> candidates) {
+  private static String findWordWithMaxFrequency(ArrayList<Sentence> candidates) {
     edu.stanford.nlp.process.TokenizerFactory<Word> factory = PTBTokenizerFactory
             .newTokenizerFactory();
     HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -133,8 +133,7 @@ public class AnswerProcessor {
 
   }
 
-  private static String findEntityWithMaxFrequency(ArrayList<Candidate> candidates,
-          String QuestionEntity) {
+  static String findEntityWithMaxFrequency(ArrayList<Sentence> candidates, String QuestionEntity) {
 
     HashMap<String, Integer> result = new HashMap<String, Integer>();
 
@@ -167,7 +166,7 @@ public class AnswerProcessor {
 
   }
 
-  private static String predictAnswer(ArrayList<Candidate> candidates) {
+  private static String predictAnswer(ArrayList<Sentence> candidates) {
     return findWordWithMaxFrequency(candidates);
   }
 
@@ -198,16 +197,18 @@ public class AnswerProcessor {
   }
 
   public static void main(String arg[]) throws IOException {
-    ArrayList<Candidate> candidates = new ArrayList<Candidate>();
-    Candidate cand = new Candidate();
-    cand.text = "What move neuron?";
-
-    //candidates.add(cand);
-    // findEntityWithMaxFrequency(candidates, "human CD34+");
-    //System.out.println("result is " + findEntityWithMaxFrequency(candidates, "G-CSF"));
-    sentieceParser("What move neuron?");
-    //ReVerbExtract("What move neuron?");
-    //tagger("just test");
+    // System.out.println("Answer is: " + findEntityWithMaxFrequency(new ArrayList<Sentence>(),
+    // "G-CSF"));
+    ArrayList<Sentence> candidates = new ArrayList<Sentence>();
+    Sentence cand = new Sentence("human CD34+ is not G-CSF", 1.0);
+    // // cand.text = "What move CD34+?";
+    // //
+    candidates.add(cand);
+    // findEntityWithMaxFrequency(candidates, "");
+    System.out.println("Answer is " + findEntityWithMaxFrequency(candidates, "G-CSF"));
+    // //sentieceParser("What move CD34+?");
+    // //ReVerbExtract("What move neuron?");
+    // //tagger("just test");
 
   }
 

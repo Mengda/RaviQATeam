@@ -93,7 +93,7 @@ public class ArticleProcessor {
 		for (Article article : candidateArticleList) {
 			Double score = article.score;
 			String fileName = article.fileName;
-
+			//fileName = "D:" + fileName;
 			System.out.println("in getCandSentence, filename = \"" + fileName
 					+ "\"");
 

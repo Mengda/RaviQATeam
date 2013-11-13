@@ -17,6 +17,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/abner.jar"/>
+	<classpathentry kind="lib" path="src/resources/abner.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
