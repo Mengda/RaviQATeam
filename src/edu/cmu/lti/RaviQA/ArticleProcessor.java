@@ -64,13 +64,15 @@ public class ArticleProcessor {
 		HashMap<String, Double> answerMap = new HashMap<String, Double>();
 
 		for (String kwd : entities.get(0)) {
-			//TODO Need to find a way to better match.
-			if (kwdArticleMap.containsKey(kwd)) {
-				for (String fileName : kwdArticleMap.get(kwd)) {
-					if (!answerMap.containsKey(fileName)) {
-						answerMap.put(fileName, 0.);
+			// TODO Need to find a way to better match.
+			for (String dictKwd : kwdArticleMap.keySet()) {
+				if (StringUtils.contains(dictKwd, kwd)) {
+					for (String fileName : kwdArticleMap.get(dictKwd)) {
+						if (!answerMap.containsKey(fileName)) {
+							answerMap.put(fileName, 0.);
+						}
+						answerMap.put(fileName, answerMap.get(fileName) + 1);
 					}
-					answerMap.put(fileName, answerMap.get(fileName) + 1);
 				}
 			}
 		}
@@ -89,15 +91,15 @@ public class ArticleProcessor {
 		HashMap<String, Double> answerMap = new HashMap<String, Double>();
 
 		for (String kwd : entities.get(0)) {
-			for(String dictEntity : kwdArticleMap.keySet())
-			if (dictEntity.contains(kwd)) {
-				for (String fileName : kwdArticleMap.get(kwd)) {
-					if (!answerMap.containsKey(fileName)) {
-						answerMap.put(fileName, 0.);
+			for (String dictEntity : kwdArticleMap.keySet())
+				if (dictEntity.contains(kwd)) {
+					for (String fileName : kwdArticleMap.get(kwd)) {
+						if (!answerMap.containsKey(fileName)) {
+							answerMap.put(fileName, 0.);
+						}
+						answerMap.put(fileName, answerMap.get(fileName) + 1);
 					}
-					answerMap.put(fileName, answerMap.get(fileName) + 1);
 				}
-			}
 		}
 
 		for (String fileName : answerMap.keySet()) {
@@ -105,8 +107,7 @@ public class ArticleProcessor {
 		}
 		return answer;
 	}
-	
-	
+
 	public static ArrayList<Sentence> getCandSentence(
 			ArrayList<Article> candidateArticleList,
 			ArrayList<ArrayList<String>> entities) throws Exception {
@@ -117,7 +118,7 @@ public class ArticleProcessor {
 		for (Article article : candidateArticleList) {
 			Double score = article.score;
 			String fileName = article.fileName;
-			//fileName = "D:" + fileName;
+			// fileName = "D:" + fileName;
 			System.out.println("in getCandSentence, filename = \"" + fileName
 					+ "\"");
 
@@ -128,7 +129,7 @@ public class ArticleProcessor {
 
 				processNode(doc.getChildNodes(), entities, result, score);
 			} catch (FileNotFoundException e) {
-				System.err.format("File not found, file = \"%s\"\n",fileName);
+				System.err.format("File not found, file = \"%s\"\n", fileName);
 			}
 		}
 		for (String key : result.keySet()) {
