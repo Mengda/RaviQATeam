@@ -21,20 +21,27 @@ public class IndexLoader {
 
 	public static HashMap<String, ArrayList<String>> Load() {
 		HashMap<String, ArrayList<String>> answer = new HashMap<String, ArrayList<String>>();
-		File f = new File("./preprocessing/KeyDict");
+		File f = new File("../../preprocessing/KeyDict");
+		System.out.println(System.getProperty("user.dir"));
+		File directory = new File("");//设定为当前文件夹
+		try{
+		    System.out.println(directory.getCanonicalPath());//获取标准的路径
+		    System.out.println(directory.getAbsolutePath());//获取绝对路径
+		}catch(Exception e){}
+		//File f = new File("C:/Users/Eltshan/git/raviQAProject/RaviQATeam/preprocessing/KeyDict");
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
 			while (line != null) {
 				String[] components = line.split("\t");
 				if (components.length!=2) {
-					System.err.println("KeyDict Format Error! line = \"" + line + "\"");
+					//System.err.println("KeyDict Format Error! line = \"" + line + "\"");
 					line = br.readLine();
 					continue;
 				}
 				
 				if(!CharMatcher.ASCII.matchesAllOf(line)){
-					System.err.println("Line contains non-ASCII characters! line = \"" + line + "\"");
+					//System.err.println("Line contains non-ASCII characters! line = \"" + line + "\"");
 					line = br.readLine();
 					continue;
 				}

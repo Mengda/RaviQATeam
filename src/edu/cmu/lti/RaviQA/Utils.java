@@ -10,10 +10,10 @@ import java.util.*;
 public class Utils {
 	// returnvalue.get(0) = noun phrase
 	// returnvalue.get(1) = verb
-	static public ArrayList<ArrayList<String>> getEntities(String input) {
+	static public ArrayList<ArrayList<String>> getEntities(String input, String verb) {
 		// Using a silly getEntities!
 		System.out.println("Using a silly getEntities!");
-		return Tester.getEntities(input);
+		return Tester.getEntities(input,verb);
 		//return null;
 	}
 

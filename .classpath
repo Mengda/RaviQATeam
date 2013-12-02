@@ -18,5 +18,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="src/resources/abner.jar"/>
+	<classpathentry kind="lib" path="src/resources/acm.jar"/>
+	<classpathentry kind="lib" path="src/ws4j-1.0.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

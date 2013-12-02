@@ -5,10 +5,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.TaggedWord;
@@ -26,13 +29,16 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.washington.cs.knowitall.extractor.ReVerbExtractor;
 import edu.washington.cs.knowitall.extractor.conf.ConfidenceFunction;
 import edu.washington.cs.knowitall.extractor.conf.ReVerbOpenNlpConfFunction;
+import edu.washington.cs.knowitall.morpha.MorphaStemmer;
 import edu.washington.cs.knowitall.nlp.ChunkedSentence;
 import edu.washington.cs.knowitall.nlp.OpenNlpSentenceChunker;
 import edu.washington.cs.knowitall.nlp.extraction.ChunkedBinaryExtraction;
 import abner.Tagger;
 
 public class AnswerProcessor {
-  private ArrayList<Candidate> candidates;
+  private static ArrayList<Sentence> candidates;
+
+  private Question question;
 
   private static HashSet<String> dictionary = new HashSet<String>();
 
@@ -45,6 +51,10 @@ public class AnswerProcessor {
   // part-of-speech tagger.
   private static String eg = "I am one of the people who don't like Apple product";
 
+  public AnswerProcessor(ArrayList<Sentence> inputCandidates) {
+    candidates = inputCandidates;
+  }
+
   private static ArrayList<TaggedWord> tagger(String text) {
     // Initialize the tagger
     MaxentTagger tagger = new MaxentTagger("english-bidirectional-distsim.tagger");
@@ -52,12 +62,13 @@ public class AnswerProcessor {
     String sample = "John hit the ball";
 
     // String tagged = tagger.tagString(sample);
-    List<List<HasWord>> x = tagger.tokenizeText(new StringReader(sample),
+    List<List<HasWord>> x = tagger.tokenizeText(new StringReader(text),
             PTBTokenizerFactory.newTokenizerFactory());
 
     ArrayList<TaggedWord> taggedResult = tagger.tagSentence(x.get(0));
     // Output the result
-    System.out.println(taggedResult.get(0).tag());
+    for (int i = 0; i < taggedResult.size(); i++)
+      System.out.println(taggedResult.get(i).toString() + " " + taggedResult.get(i).tag());
     return taggedResult;
 
   }
@@ -106,7 +117,7 @@ public class AnswerProcessor {
     System.out.println();
   }
 
-  private static String findWordWithMaxFrequency(ArrayList<Sentence> candidates) {
+  private static String findWordWithMaxFrequency() {
     edu.stanford.nlp.process.TokenizerFactory<Word> factory = PTBTokenizerFactory
             .newTokenizerFactory();
     HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -128,12 +139,55 @@ public class AnswerProcessor {
         }
       }// end iteration of tokens
     }
-
     return currentAnswer;
 
   }
 
-  static String findEntityWithMaxFrequency(ArrayList<Sentence> candidates, String QuestionEntity) {
+  static String findEntities() {
+    HashMap<String, Integer> result = new HashMap<String, Integer>();
+    ArrayList<NamedEntity> entities = new ArrayList<NamedEntity>();
+    Tagger abnerTagger = new Tagger(Tagger.BIOCREATIVE);
+    int currentMax = 0;
+    String currentAnswer = "";
+    int entitieNum = 0;
+    for (int k = 0; k < candidates.size(); k++) {
+      if(candidates.get(k).text.length() > 1000)
+        continue;
+      System.out.println( candidates.get(k).text);
+
+      String[][] nerTagged = abnerTagger.getEntities(candidates.get(k).text);
+      int i = 0;
+      for (int j = 0; j < nerTagged[i].length; j++) {
+
+          if (!result.containsKey(nerTagged[i][j])) {
+            result.put(nerTagged[i][j], entitieNum++);
+            entities.add(new NamedEntity(nerTagged[i][j]));
+          } else
+            entities.get(result.get(nerTagged[i][j])).addFrequency();
+        }
+      
+    }
+
+    Comparator<NamedEntity> comparator = new Comparator<NamedEntity>() { // comparator for sort
+                                                                         // arraylist based on score
+      public int compare(NamedEntity S1, NamedEntity S2) {
+        if (S1.getFrequency() != S2.getFrequency()) {
+          return (int) (S2.getFrequency() - S1.getFrequency());
+        } else
+          return 0;
+      }
+
+    };
+
+    Collections.sort(entities, comparator);
+    // String nerTagged = abnerTagger.tagABNER("gene");
+    for (int i = 0; i < entities.size(); i++)
+      System.out.println(entities.get(i).getName() + " : " + entities.get(i).getFrequency());
+    return currentAnswer;
+
+  }
+
+  static String findEntityWithMaxFrequency(String QuestionEntity, String questionVerb) {
 
     HashMap<String, Integer> result = new HashMap<String, Integer>();
 
@@ -142,32 +196,66 @@ public class AnswerProcessor {
     int currentMax = 0;
     String currentAnswer = "";
     for (int k = 0; k < candidates.size(); k++) {
-      String[][] nerTagged = abnerTagger.getEntities(candidates.get(k).text);
-      // for (int i = 0; i < nerTagged.length; i++) {
-      int i = 0;
-      for (int j = 0; j < nerTagged[i].length; j++) {
-        // System.out.println(nerTagged[i][j]);
-        if (nerTagged[i][j].equals(QuestionEntity))
-          continue;
-        if (!result.containsKey(nerTagged[i][j]))
-          result.put(nerTagged[i][j], 0);
+      questionVerb = MorphaStemmer.stemToken(questionVerb);
+      if(isValid(candidates.get(k).text, questionVerb))
+      {
+        String[][] nerTagged = abnerTagger.getEntities(candidates.get(k).text);
+        // for (int i = 0; i < nerTagged.length; i++) {
+        int i = 0;
+        for (int j = 0; j < nerTagged[i].length; j++) {
+          // System.out.println(nerTagged[i][j]);
+          if (nerTagged[i][j].equals(QuestionEntity))
+            continue;
+          if (!result.containsKey(nerTagged[i][j]))
+            result.put(nerTagged[i][j], 0);
 
-        result.put(nerTagged[i][j], result.get(nerTagged[i][j]) + 1);
-        if (result.get(nerTagged[i][j]) >= currentMax) {
-          currentMax = result.get(nerTagged[i][j]);
-          currentAnswer = nerTagged[i][j];
+          result.put(nerTagged[i][j], result.get(nerTagged[i][j]) + 1);
+          if (result.get(nerTagged[i][j]) >= currentMax) {
+            currentMax = result.get(nerTagged[i][j]);
+            currentAnswer = nerTagged[i][j];
+      }
+      
+
         }
       }
     }
 
     // String nerTagged = abnerTagger.tagABNER("gene");
+    System.out.println(currentMax);
 
     return currentAnswer;
 
   }
 
+  private static boolean isValid(String x, String questionVerb)
+  {
+    String[] tmp = x.split(" ");
+    final Pattern whitespace = Pattern.compile("\\s+");
+
+    for(int i = 0; i < tmp.length; i++)
+    {
+      //questionVerb = MorphaStemmer.stemToken(questionVerb);
+      //System.out.println(tmp[i]);
+      if (whitespace.matcher(tmp[i]).find()) {
+        continue;
+      }
+      if(chunkScoreCalculator.wordSimilarity(MorphaStemmer.stemToken(tmp[i]), questionVerb) > 0.6)
+      {
+        x = x.replace("¦Á","Alfa" );
+        x = x.replace("¦Â", "Beta");
+        x = x.replace("¦Ã", "gamma");
+
+        
+        System.out.println(tmp[i]);
+        return true;
+
+      }
+    }
+    return false;
+  }
+  
   private static String predictAnswer(ArrayList<Sentence> candidates) {
-    return findWordWithMaxFrequency(candidates);
+    return findWordWithMaxFrequency();
   }
 
   private static void ReVerbExtract(String str) throws IOException {
@@ -196,20 +284,29 @@ public class AnswerProcessor {
     }
   }
 
+  public void CandidateReVerbExtract() throws IOException {
+    for (Sentence sentences : candidates) {
+      this.ReVerbExtract(sentences.text);
+    }
+    return;
+  }
+
   public static void main(String arg[]) throws IOException {
     // System.out.println("Answer is: " + findEntityWithMaxFrequency(new ArrayList<Sentence>(),
     // "G-CSF"));
-    ArrayList<Sentence> candidates = new ArrayList<Sentence>();
-    Sentence cand = new Sentence("human CD34+ is not G-CSF", 1.0);
+     ArrayList<Sentence> candidates = new ArrayList<Sentence>();
+     Sentence cand = new Sentence("confirming that photosensitization leads to productive NF-¦ÊB-mediated gene transcription",1.0);
+     System.out.println(cand.text.length());
     // // cand.text = "What move CD34+?";
     // //
-    candidates.add(cand);
+     candidates.add(cand);
     // findEntityWithMaxFrequency(candidates, "");
-    System.out.println("Answer is " + findEntityWithMaxFrequency(candidates, "G-CSF"));
-    // //sentieceParser("What move CD34+?");
-    // //ReVerbExtract("What move neuron?");
-    // //tagger("just test");
-
+    // System.out.println("Answer is " + findEntityWithMaxFrequency(candidates, "G-CSF"));
+    // sentieceParser("Something inhibit apoptotic cell death");
+     ReVerbExtract("Astrocytes in AD brains shows mitochondrial defects");
+    // tagger("Something inhibit apoptotic cell death");
+    // AnswerProcessor ansProcessor = new AnswerProcessor(candidates);
+    // ansProcessor.findEntities();
   }
 
 }
