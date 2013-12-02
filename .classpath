@@ -17,8 +17,12 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="src/resources/abner.jar"/>
 	<classpathentry kind="lib" path="src/resources/acm.jar"/>
 	<classpathentry kind="lib" path="src/ws4j-1.0.1.jar"/>
+=======
+	<classpathentry kind="lib" path="src/abner.jar"/>
+>>>>>>> 655e972303c7e98d57dc909917f249ed5f5b50ee
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

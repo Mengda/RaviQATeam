@@ -57,21 +57,22 @@ public class ArticleProcessor {
 	}
 
 	public static ArrayList<Article> getArticle(
-			HashMap<String, ArrayList<String>> kwdArticalMap,
+			HashMap<String, ArrayList<String>> kwdArticleMap,
 			ArrayList<ArrayList<String>> entities) {
 
 		ArrayList<Article> answer = new ArrayList<Article>();
 		HashMap<String, Double> answerMap = new HashMap<String, Double>();
 
 		for (String kwd : entities.get(0)) {
-			
-			//TODO Need to find a way to better match.
-			if (kwdArticalMap.containsKey(kwd)) {
-				for (String fileName : kwdArticalMap.get(kwd)) {
-					if (!answerMap.containsKey(fileName)) {
-						answerMap.put(fileName, 0.);
+			// TODO Need to find a way to better match.
+			for (String dictKwd : kwdArticleMap.keySet()) {
+				if (StringUtils.contains(dictKwd, kwd)) {
+					for (String fileName : kwdArticleMap.get(dictKwd)) {
+						if (!answerMap.containsKey(fileName)) {
+							answerMap.put(fileName, 0.);
+						}
+						answerMap.put(fileName, answerMap.get(fileName) + 1);
 					}
-					answerMap.put(fileName, answerMap.get(fileName) + 1);
 				}
 			}
 		}
@@ -79,7 +80,31 @@ public class ArticleProcessor {
 		for (String fileName : answerMap.keySet()) {
 			answer.add(new Article(fileName, answerMap.get(fileName)));
 		}
+		return answer;
+	}
 
+	public static ArrayList<Article> getArticle_nonpreciseMatch(
+			HashMap<String, ArrayList<String>> kwdArticleMap,
+			ArrayList<ArrayList<String>> entities) {
+
+		ArrayList<Article> answer = new ArrayList<Article>();
+		HashMap<String, Double> answerMap = new HashMap<String, Double>();
+
+		for (String kwd : entities.get(0)) {
+			for (String dictEntity : kwdArticleMap.keySet())
+				if (dictEntity.contains(kwd)) {
+					for (String fileName : kwdArticleMap.get(kwd)) {
+						if (!answerMap.containsKey(fileName)) {
+							answerMap.put(fileName, 0.);
+						}
+						answerMap.put(fileName, answerMap.get(fileName) + 1);
+					}
+				}
+		}
+
+		for (String fileName : answerMap.keySet()) {
+			answer.add(new Article(fileName, answerMap.get(fileName)));
+		}
 		return answer;
 	}
 
@@ -104,7 +129,7 @@ public class ArticleProcessor {
 
 				processNode(doc.getChildNodes(), entities, result, score);
 			} catch (FileNotFoundException e) {
-				System.err.format("File not found, file = \"%s\"\n",fileName);
+				System.err.format("File not found, file = \"%s\"\n", fileName);
 			}
 		}
 		for (String key : result.keySet()) {

@@ -22,16 +22,16 @@ public class Utils {
 	}
 
 	public static ArrayList<Article> getArticle(
-			HashMap<String, ArrayList<String>> kwdArticalMap,
+			HashMap<String, ArrayList<String>> kwdArticleMap,
 			ArrayList<ArrayList<String>> entities) {
-		return ArticleProcessor.getArticle(kwdArticalMap, entities);
+		return ArticleProcessor.getArticle(kwdArticleMap, entities);
 	}
 
 	public static ArrayList<Sentence> getCandSentence(
-			ArrayList<Article> candidateArticalList,
+			ArrayList<Article> candidateArticleList,
 			ArrayList<ArrayList<String>> entities) {
 		try {
-			return ArticleProcessor.getCandSentence(candidateArticalList,
+			return ArticleProcessor.getCandSentence(candidateArticleList,
 					entities);
 		} catch (Exception e) {
 			e.printStackTrace();

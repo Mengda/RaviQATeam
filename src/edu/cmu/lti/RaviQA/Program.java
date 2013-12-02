@@ -1,3 +1,4 @@
+//
 //package edu.cmu.lti.RaviQA;
 //
 //import java.util.*;
@@ -8,15 +9,15 @@
 // */
 //public class Program {
 //	public static void main(String[] args) {
-//		HashMap<String, ArrayList<String>> kwdArticalMap = Utils.LoadIndex();
+//		HashMap<String, ArrayList<String>> kwdArticleMap = Utils.LoadIndex();
 //
 //		// Repeat
 //		String input = System.console().readLine();
-//		//ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
-//		ArrayList<Article> candidateArticalList = Utils.getArticle(
-//				kwdArticalMap, entities);
+//		ArrayList<ArrayList<String>> entities = Utils.getEntities(input);
+//		ArrayList<Article> candidateArticleList = Utils.getArticle(
+//				kwdArticleMap, entities);
 //		ArrayList<Sentence> candidateSentenceList = Utils.getCandSentence(
-//				candidateArticalList, entities);
+//				candidateArticleList, entities);
 //		ArrayList<Candidate> candidateAnswerList = Utils.getCandAns(
 //				candidateSentenceList, entities);
 //		// Print output
